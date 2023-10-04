@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/project-lab-build/static/js/main.edd0e377.js",
+    "index.html": "/project-lab-build/index.html",
+    "main.edd0e377.js.map": "/project-lab-build/static/js/main.edd0e377.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.edd0e377.js"
+  ]
+}
