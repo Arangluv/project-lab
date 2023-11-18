@@ -1,6 +1,16 @@
 import styled from "styled-components";
+import { useForm } from "react-hook-form";
 import { FaLocationArrow } from "react-icons/fa";
-const Wrapper = styled.form`
+import { useChatMutation } from "../hooks/chat-hook";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  chatLoading,
+  conversationHistory,
+  firstConversation,
+  isResult,
+  personalityState,
+} from "../atoms/atom";
+const Wrapper = styled.form<SProps>`
   width: 100%;
   height: 100%;
   padding-left: 3vw;
@@ -19,11 +29,14 @@ const Wrapper = styled.form`
     align-items: center;
     justify-content: center;
     input {
+      background-color: ${(props) =>
+        props.isUserClickResult ? "rgba(60, 66, 69,0.1) " : "transparent"};
       height: 100%;
       width: 100%;
       border-top-left-radius: 10px;
       border-bottom-left-radius: 10px;
-      border: 1px solid rgba(34, 40, 49, 0.5);
+      border: ${(props) =>
+        props.isUserClickResult ? "none" : "1px solid rgba(34, 40, 49, 0.5)"};
       border-right: none;
       padding-left: 1vw;
       font-size: 1.2vw;
@@ -35,11 +48,15 @@ const Wrapper = styled.form`
   }
   label[for="submit"] {
     width: 15%;
-    border: 1px solid rgba(34, 40, 49, 0.5);
+    border: ${(props) =>
+      props.isUserClickResult ? "none" : "1px solid rgba(34, 40, 49, 0.5)"};
     height: 3vw;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     transition: all 0.1s ease-in-out;
+    background-color: ${(props) =>
+      props.isUserClickResult ? "rgba(60, 66, 69,0.1) " : "transparent"};
+
     span {
       width: 100%;
       display: flex;
@@ -64,18 +81,69 @@ const Wrapper = styled.form`
     }
   }
 `;
-
+interface SProps {
+  isUserClickResult: boolean;
+}
+interface DProps {
+  question: string;
+}
 export default function ChatSubmitBar() {
+  const [isFirstConversation, setIsFirstConversation] =
+    useRecoilState(firstConversation);
+  const personailty = useRecoilValue(personalityState);
+  const setCovHistory = useSetRecoilState(conversationHistory);
+  const { register, handleSubmit } = useForm<DProps>();
+  const [isChatLoading, setIsChatLoading] = useRecoilState(chatLoading);
+  const chatMutate = useChatMutation({
+    setIsFirstConversation,
+    isFirstConversation,
+    setCovHistory,
+    setIsChatLoading,
+  });
+  const isUserClickResult = useRecoilValue(isResult);
+  const onValid = (data: DProps) => {
+    if (isFirstConversation) {
+      setIsChatLoading(true);
+      chatMutate({
+        question: `mbti 유형별로 사용자의 고민을 받고있는 서비스를 만들었습니다. 사용자의 mbti는 다음과 같습니다 ->${personailty}
+        사용자의 고민은 다음과 같습니다 ${data.question}
+        대화형식으로 진행해주세요
+        `,
+      });
+      setCovHistory((pre) => [
+        ...pre,
+        { role: "user", content: data.question },
+      ]);
+      return;
+    }
+    setIsChatLoading(true);
+    chatMutate({
+      question: data.question,
+    });
+    setCovHistory((pre) => [...pre, { role: "user", content: data.question }]);
+  };
   return (
-    <Wrapper>
+    <Wrapper
+      onSubmit={handleSubmit(onValid)}
+      isUserClickResult={isUserClickResult}
+    >
       <label htmlFor="content">
-        <input id="content" type="text" />
+        <input
+          {...register("question", { required: "메세지를 입력해주세요" })}
+          id="content"
+          type="text"
+          readOnly={isUserClickResult}
+        />
       </label>
       <label htmlFor="submit">
         <span>
           <FaLocationArrow />
         </span>
-        <input id="submit" type="submit" />
+        <input
+          disabled={isChatLoading || isUserClickResult}
+          id="submit"
+          type="submit"
+        />
       </label>
     </Wrapper>
   );

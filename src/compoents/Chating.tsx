@@ -5,7 +5,16 @@ import { BsFillArrowLeftCircleFill, BsChatLeft } from "react-icons/bs";
 import { AiOutlineBarChart } from "react-icons/ai";
 import ChatSubmitBar from "./ChatSubmitBar";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { chatState, nextPageState, personalityState } from "../atoms/atom";
+import {
+  chatLoading,
+  chatResultContent,
+  chatState,
+  isResult,
+  nextPageState,
+  personalityState,
+} from "../atoms/atom";
+import Result from "./Result";
+import { useSummaryMutation } from "../hooks/chat-hook";
 const Wrapper = styled.div`
   width: 100%;
   height: 100vh;
@@ -97,11 +106,27 @@ const ChatScreen = styled.div`
 `;
 export default function Chatting() {
   const setNextPage = useSetRecoilState(nextPageState);
+  const setIsUserResultClick = useSetRecoilState(isResult);
   const setPersonalityState = useSetRecoilState(personalityState);
+  const setChatLoading = useSetRecoilState(chatLoading);
+  const setChatResultContent = useSetRecoilState(chatResultContent);
   const [chatingState, setChatingState] = useRecoilState(chatState);
   const handlePrevClick = () => {
     setNextPage(false);
     setPersonalityState(null);
+  };
+  const chatSummaryMutate = useSummaryMutation({
+    setChatLoading,
+    setChatResultContent,
+  });
+  const handleSummaryClick = () => {
+    chatSummaryMutate({
+      question:
+        "지금까지 우리가 한 대화내용을 3줄 요약해줘. 보고서의 결론부분처럼 요약해줘",
+    });
+    setChatingState("result");
+    setIsUserResultClick(true);
+    setChatLoading(true);
   };
   return (
     <Wrapper>
@@ -109,6 +134,7 @@ export default function Chatting() {
         <BiSolidBot id="logo-icon" />
         <SubSideBarContent>
           <li
+            onClick={() => setChatingState("chat")}
             style={{
               backgroundColor:
                 chatingState === "chat" ? "#0085FF" : "transparent",
@@ -116,25 +142,39 @@ export default function Chatting() {
           >
             <BsChatLeft
               style={{
-                color: chatingState === "chat" ? "#fcfefe" : "transparent",
+                color: chatingState === "chat" ? "#fcfefe" : "black",
               }}
             />
           </li>
-          <li>
-            <AiOutlineBarChart />
+          <li
+            onClick={() => setChatingState("result")}
+            style={{
+              backgroundColor:
+                chatingState === "result" ? "#0085FF" : "transparent",
+            }}
+          >
+            <AiOutlineBarChart
+              style={{
+                color: chatingState === "result" ? "#fcfefe" : "black",
+              }}
+            />
           </li>
         </SubSideBarContent>
         <BsFillArrowLeftCircleFill onClick={handlePrevClick} id="prev-btn" />
       </SideBar>
-      <ChatScreen>
-        <MainChatScreen />
-        <ChatSubmitBar></ChatSubmitBar>
-        <div id="chat-sidebar">
-          <section>
-            <AiOutlineBarChart />
-          </section>
-        </div>
-      </ChatScreen>
+      {chatingState === "chat" ? (
+        <ChatScreen>
+          <MainChatScreen />
+          <ChatSubmitBar></ChatSubmitBar>
+          <div id="chat-sidebar">
+            <section onClick={() => handleSummaryClick()}>
+              <AiOutlineBarChart />
+            </section>
+          </div>
+        </ChatScreen>
+      ) : (
+        <Result />
+      )}
     </Wrapper>
   );
 }

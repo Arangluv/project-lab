@@ -5,7 +5,7 @@ export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />}></Route>
+        <Route path={process.env.PUBLIC_URL + "/"} element={<App />}></Route>
       </Routes>
     </BrowserRouter>
   );
