@@ -108,7 +108,7 @@ export default function Selection() {
     setPersonailty(data.mbti);
   };
   useEffect(() => {
-    const regex = /^[ei][sn][tf][jp]$/;
+    const regex = /^[eiEI][snSN][tfTF][jpJP]$/;
     if (!regex.test(watch("mbti"))) {
       setPersonailty(null);
       return;
@@ -117,7 +117,7 @@ export default function Selection() {
   }, [watch("mbti")]);
   return (
     <Wrapper>
-      <h1>상담받고 싶은 성격을 선택해주세요</h1>
+      <h1>당신의 MBTI를 입력해주세요</h1>
       <SelectionContainer
         onSubmit={handleSubmit(onValid)}
         isPersonailty={Boolean(personailty)}

@@ -92,7 +92,7 @@ export default function ChatSubmitBar() {
     useRecoilState(firstConversation);
   const personailty = useRecoilValue(personalityState);
   const setCovHistory = useSetRecoilState(conversationHistory);
-  const { register, handleSubmit } = useForm<DProps>();
+  const { register, handleSubmit, setValue } = useForm<DProps>();
   const [isChatLoading, setIsChatLoading] = useRecoilState(chatLoading);
   const chatMutate = useChatMutation({
     setIsFirstConversation,
@@ -103,6 +103,7 @@ export default function ChatSubmitBar() {
   const isUserClickResult = useRecoilValue(isResult);
   const onValid = (data: DProps) => {
     if (isFirstConversation) {
+      setValue("question", "");
       setIsChatLoading(true);
       chatMutate({
         question: `mbti 유형별로 사용자의 고민을 받고있는 서비스를 만들었습니다. 사용자의 mbti는 다음과 같습니다 ->${personailty}
@@ -116,6 +117,7 @@ export default function ChatSubmitBar() {
       ]);
       return;
     }
+    setValue("question", "");
     setIsChatLoading(true);
     chatMutate({
       question: data.question,
