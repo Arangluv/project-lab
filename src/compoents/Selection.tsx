@@ -4,6 +4,7 @@ import { nextPageState, personalityState } from "../atoms/atom";
 import { CiSearch } from "react-icons/ci";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
+import { useMbtiMutation } from "../hooks/chat-hook";
 const Wrapper = styled.div`
   width: 100%;
   height: 100vh;
@@ -97,15 +98,11 @@ export default function Selection() {
   const [personailty, setPersonailty] = useRecoilState(personalityState);
   const setNextPage = useSetRecoilState(nextPageState);
   const { register, watch, handleSubmit } = useForm<DProps>();
-  const handleNextClcik = () => {
-    if (!personailty) {
-      return;
-    }
-    setNextPage(true);
-  };
+  const mbtiMutate = useMbtiMutation();
   const onValid = (data: DProps) => {
     setNextPage(true);
     setPersonailty(data.mbti);
+    mbtiMutate({ mbti: data.mbti });
   };
   useEffect(() => {
     const regex = /^[eiEI][snSN][tfTF][jpJP]$/;
@@ -134,12 +131,7 @@ export default function Selection() {
             maxLength={4}
           />
         </label>
-        <input
-          type="submit"
-          onClick={handleNextClcik}
-          disabled={!personailty}
-          value={"Continue"}
-        />
+        <input type="submit" disabled={!personailty} value={"Continue"} />
       </SelectionContainer>
     </Wrapper>
   );

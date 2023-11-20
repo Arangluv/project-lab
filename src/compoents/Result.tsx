@@ -52,7 +52,6 @@ export default function Result() {
   const setIsResult = useSetRecoilState(isResult);
   const setChatResultContent = useSetRecoilState(chatResultContent);
   const handleResetClick = () => {
-    postReset({ role: "funny" });
     setNextPage(false);
     setPersonality(null);
     setChatState("chat");

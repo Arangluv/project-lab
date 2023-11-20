@@ -20,7 +20,7 @@ export const postSummary = async (data: MessageProps) => {
   }).then((result) => result.data.response);
 };
 interface ResetProps {
-  role: string;
+  mbti: string;
 }
 export const postReset = async (data: ResetProps) => {
   return await axios({

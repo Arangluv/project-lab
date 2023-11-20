@@ -106,9 +106,9 @@ export default function ChatSubmitBar() {
       setValue("question", "");
       setIsChatLoading(true);
       chatMutate({
-        question: `mbti 유형별로 사용자의 고민을 받고있는 서비스를 만들었습니다. 사용자의 mbti는 다음과 같습니다 ->${personailty}
-        사용자의 고민은 다음과 같습니다 ${data.question}
+        question: `
         대화형식으로 진행해주세요
+        저의 고민은 다음과 같습니다 ${data.question}
         `,
       });
       setCovHistory((pre) => [

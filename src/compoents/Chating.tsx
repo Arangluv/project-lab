@@ -111,6 +111,8 @@ export default function Chatting() {
   const setChatLoading = useSetRecoilState(chatLoading);
   const setChatResultContent = useSetRecoilState(chatResultContent);
   const [chatingState, setChatingState] = useRecoilState(chatState);
+  
+  // TODO PrevClick 
   const handlePrevClick = () => {
     setNextPage(false);
     setPersonalityState(null);

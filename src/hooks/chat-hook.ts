@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { postMessage, postSummary } from "../api/chat-api";
+import { postMessage, postReset, postSummary } from "../api/chat-api";
 import { SetterOrUpdater } from "recoil";
 import { UseFormSetValue } from "react-hook-form";
 
@@ -65,4 +65,17 @@ export const useSummaryMutation = ({
     },
   });
   return chatSummaryMutate;
+};
+
+export const useMbtiMutation = () => {
+  const { mutate: mbtiMutate } = useMutation({
+    mutationFn: postReset,
+    onSuccess: () => {
+      console.log("mbti를 제출했습니다");
+    },
+    onError: (error) => {
+      console.log("mbti를 제출하는데 문제가 발생했습니다");
+    },
+  });
+  return mbtiMutate;
 };
